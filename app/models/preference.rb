@@ -10,6 +10,9 @@
 #  updated_at  :datetime         not null
 #
 class Preference < ApplicationRecord
+  has_many :user_preferences, dependent: :destroy
+  has_many :users, through: :user_preferences
+
   validates :name, presence: true
   validates :description, presence: true
   validates :restriction, inclusion: { in: [true, false] }

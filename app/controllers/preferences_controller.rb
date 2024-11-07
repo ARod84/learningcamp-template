@@ -1,13 +1,10 @@
-# frozen_string_literal: true
-
+# app/controllers/preferences_controller.rb
 class PreferencesController < ApplicationController
-  before_action :authenticate_user!, :set_preference, only: %i[show update]
+  before_action :authenticate_user!
+  before_action :set_preference, only: %i[show update destroy]
 
   def show
-    @preference = Preference.find(params[:id])
     render json: @preference
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Preference not found' }, status: :not_found
   end
 
   def create
@@ -22,10 +19,15 @@ class PreferencesController < ApplicationController
 
   def update
     if @preference.update(preference_params)
-      render json: @preference
+      render json: @preference, status: :ok
     else
       render json: { errors: @preference.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    @preference.destroy
+    head :no_content
   end
 
   private
